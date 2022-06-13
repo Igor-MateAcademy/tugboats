@@ -1,0 +1,174 @@
+.title {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #575757;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 0;
+  list-style: none;
+
+  .item {
+    width: 30%;
+
+    .button {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+      padding: 16px 24px;
+      width: 100%;
+      height: 220px;
+      outline: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: transparent;
+      transition: all 0.4s;
+
+      &:hover {
+        border-color: #1890ff;
+
+        .delete {
+          font-size: 20px;
+
+          .cross {
+            > svg {
+              fill: #ff3e3e;
+            }
+          }
+        }
+
+        .edit {
+          font-size: 20px;
+
+          .icon {
+            > svg {
+              fill: #1890ff;
+            }
+          }
+        }
+      }
+
+      &_new {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        transition: all 0.4s;
+
+        &:hover {
+          border-color: #1890ff;
+          cursor: pointer;
+
+          .icon {
+            > svg {
+              fill: #1890ff;
+            }
+          }
+
+          .text {
+            color: #1890ff;
+          }
+
+        }
+
+        .icon {
+          font-size: 20px;
+          transition: all 0.4s;
+
+          > svg {
+            fill: #575757;
+          }
+        }
+  
+        .text {
+          font-size: 20px;
+          color: #575757;
+          transition: all 0.4s;
+        }
+      }
+
+      .edit {
+        position: absolute;
+        top: 8px;
+        right: 52px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        background-color: transparent;
+        transition: all 0.4s;
+
+        &:hover {
+          border-color: #1890ff;
+          cursor: pointer;
+        }
+
+        .icon {
+          > svg {
+            transition: all 0.4s;
+            fill: transparent;
+          }
+        }
+      }
+
+      .delete {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        background-color: transparent;
+        transition: all 0.4s;
+
+        &:hover {
+          border-color: #ff3e3e;
+          cursor: pointer;
+        }
+
+        .cross {
+          > svg {
+            transition: all 0.4s;
+            fill: transparent;
+          }
+        }
+      }
+
+      .name {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .card {
+          font-size: 32px;
+        }
+
+        > span {
+          font-size: 18px;
+          font-weight: 500;
+          color: #575757;
+        }
+      }
+
+      .role {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .team {
+          font-size: 32px;
+        }
+
+        > span {
+          font-size: 17px;
+          color: #8f8f8f;
+        }
+      }
+    }
+  }
+}

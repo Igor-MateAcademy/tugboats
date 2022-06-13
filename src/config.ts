@@ -1,6 +1,6 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: process.env.REACT_APP_HOST,
+  baseURL: 'http://localhost:8080',
   validateStatus: (status: number) => status >= 200 && status < 500,
 });

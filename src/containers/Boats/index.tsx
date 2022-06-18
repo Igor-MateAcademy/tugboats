@@ -39,7 +39,11 @@ const Boats: React.FC = () => {
     }
   };
 
-  const deleteBoat = async (id: number) => {};
+  const deleteBoat = async (id: number) => {
+    await boatsStore.deleteBoat(id);
+
+    init();
+  };
 
   useEffect(() => {
     init();

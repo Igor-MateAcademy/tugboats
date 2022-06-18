@@ -1,9 +1,9 @@
 import { Sailor } from 'models';
 
 export interface Team {
-  mechanics: number[];
-  sailors: number[];
-  captains: number[];
+  mechanic: Sailor;
+  sailor: Sailor;
+  captain: Sailor;
 }
 
 type BoatType = 'CARGO' | 'BARGE' | 'VESSEL';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Select, Button, Divider, Tag } from 'antd';
-import { SaveOutlined, PlusOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, Select, Button, Divider } from 'antd';
+import { PlusOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import * as _ from 'lodash';
 
 import { useStore } from 'stores';
@@ -18,19 +18,14 @@ interface Props {
 const { Item, useForm } = Form;
 const { Option } = Select;
 
-const BoatModal: React.FC<Props> = ({ children, update, boat, sailors, allSailors }) => {
+const BoatModal: React.FC<Props> = ({ children, update, boat, allSailors }) => {
   const [form] = useForm();
-  const { boatsStore } = useStore();
+  const { boatsStore, sailorsStore } = useStore();
 
   const [visible, setVisible] = useState(false);
-  const [team, setTeam] = useState<Team>({
-    mechanics: [],
-    sailors: [],
-    captains: [],
-  });
-  const [sailorsFiltered, setSailorsFiltered] = useState<Sailor[]>([...sailors]);
-
   const [boatData, setBoatData] = useState<Partial<Boat>>(boat ? { ...boat } : { boatType: 'CARGO' });
+  const [sailorsForSelect, setSailorsForSelect] = useState<Sailor[]>([]);
+  const [selectedSailors, setSelectedSailors] = useState<Partial<Team>>({});
 
   const onOpen = () => {
     !visible && form.resetFields();
@@ -38,16 +33,20 @@ const BoatModal: React.FC<Props> = ({ children, update, boat, sailors, allSailor
     setVisible(!visible);
   };
 
-  const init = () => {
-    if (boat) {
-      const fullList = [...sailors, ...boat.sailors];
+  const init = async () => {
+    const _free = await sailorsStore.getFreeSailors();
 
-      setSailorsFiltered(fullList);
-      setTeam({
-        mechanics: boat.sailors.filter(s => s.sailorType === 'MECHANIC' && s.id).map(s => s.id),
-        sailors: boat.sailors.filter(s => s.sailorType === 'SAILOR' && s.id).map(s => s.id),
-        captains: boat.sailors.filter(s => s.sailorType === 'CAPTAIN' && s.id).map(s => s.id),
+    if (boat) {
+      const _all = [...boat.sailors, ..._free];
+
+      setSailorsForSelect(_all);
+      setSelectedSailors({
+        mechanic: boat.sailors.find(s => s.sailorType === 'MECHANIC'),
+        sailor: boat.sailors.find(s => s.sailorType === 'SAILOR'),
+        captain: boat.sailors.find(s => s.sailorType === 'CAPTAIN'),
       });
+    } else {
+      setSailorsForSelect(_free);
     }
   };
 
@@ -58,12 +57,21 @@ const BoatModal: React.FC<Props> = ({ children, update, boat, sailors, allSailor
     });
   };
 
+  const selectHandler = (role: keyof Team, id: number) => {
+    const _sailor = getSailorById(id);
+
+    setSelectedSailors({
+      ...selectedSailors,
+      [role]: _sailor,
+    });
+  };
+
   const submit = async () => {
     if (boat) {
-
+      await boatsStore.updateBoat(boat.id, boatData, selectedSailors);
     } else {
       try {
-        boatsStore.createBoat(boatData, team);
+        await boatsStore.createBoat(boatData, selectedSailors);
       } catch (e) {
         console.log(e);
       }
@@ -73,10 +81,10 @@ const BoatModal: React.FC<Props> = ({ children, update, boat, sailors, allSailor
     await update();
   };
 
-  const getNameBySailorId = (id: number) => {
-    const result = allSailors.find(s => s.id == id);
+  const getSailorById = (id: number) => {
+    const _sailor = allSailors.filter(s => s.id == id);
 
-    return `${result?.firstName} ${result?.lastName}`;
+    return _sailor[0];
   };
 
   useEffect(() => {
@@ -105,9 +113,9 @@ const BoatModal: React.FC<Props> = ({ children, update, boat, sailors, allSailor
           initialValues={boat ? {
             name: boat.name,
             boatType: boat.boatType,
-            mechanics: team.mechanics,
-            sailors: team.sailors,
-            captains: team.captains,
+            mechanic: selectedSailors.mechanic?.id,
+            sailor: selectedSailors.sailor?.id,
+            captain: selectedSailors.captain?.id,
           } : {
             boatType: 'CARGO',
           }}
@@ -127,8 +135,8 @@ const BoatModal: React.FC<Props> = ({ children, update, boat, sailors, allSailor
                   value: 'CARGO',
                 },
                 {
-                  label: 'Velles',
-                  value: 'VELLES',
+                  label: 'Vessel',
+                  value: 'VESSEL',
                 },
                 {
                   label: 'Barge',
@@ -143,124 +151,36 @@ const BoatModal: React.FC<Props> = ({ children, update, boat, sailors, allSailor
 
           <Divider />
 
-          <Item
-            name="mechanics"
-            label="Mechanics"
-            rules={[{ required: true, message: 'Please, select a mechanic' }]}
-          >
-            <Select
-              mode="tags"
-              onSelect={(e: number) => {
-                setTeam({
-                  ...team,
-                  mechanics: [...team.mechanics, e],
-                });
-              }}
-              onDeselect={(e: number) => {
-                setTeam({
-                  ...team,
-                  mechanics: team.mechanics.filter(i => i !== e),
-                });
-              }}
-              tagRender={props => {
-                const name = getNameBySailorId(props.value);
-
-                return (
-                  <Tag
-                    closable={props.closable}
-                    onClose={props.onClose}
-                  >
-                    {name}
-                  </Tag>
-                );
-              }}
-            >
-              {sailors.map(s => s.sailorType === 'MECHANIC' && (
-                <Option key={s.id}>
+          <Item name="mechanic" label="Mechanic" rules={[{ required: true, message: 'This field is required' }]}>
+            <Select onSelect={(id: number) => {
+              selectHandler('mechanic', id);
+            }}>
+              {sailorsForSelect.filter(s => s.sailorType === 'MECHANIC').map(s => (
+                <Option key={s.id} value={s.id}>
                   {`${s.firstName} ${s.lastName}`}
                 </Option>
               ))}
             </Select>
           </Item>
 
-          <Item
-            name="sailors"
-            label="Sailors"
-            rules={[{ required: true, message: 'Please, select a sailor' }]}
-          >
-            <Select
-              mode="tags"
-              onSelect={(e: number) => {
-                setTeam({
-                  ...team,
-                  sailors: [...team.sailors, e],
-                });
-              }}
-              onDeselect={(e: number) => {
-                setTeam({
-                  ...team,
-                  sailors: team.sailors.filter(i => i !== e),
-                });
-              }}
-              tagRender={props => {
-                const name = getNameBySailorId(props.value);
-
-                return (
-                  <Tag
-                    closable={props.closable}
-                    onClose={props.onClose}
-                  >
-                    {name}
-                  </Tag>
-                );
-              }}
-            >
-              {sailorsFiltered.map(s => {
-                return (
-                  s.sailorType === 'SAILOR' && (
-                    <Option key={s.id}>
-                      {`${s.firstName} ${s.lastName}`}
-                    </Option>
-                  )
-                );
-              })}
+          <Item name="sailor" label="Sailor" rules={[{ required: true, message: 'This field is required' }]}>
+            <Select onSelect={(id: number) => {
+              selectHandler('sailor', id);
+            }}>
+              {sailorsForSelect.filter(s => s.sailorType === 'SAILOR').map(s => (
+                <Option key={s.id} value={s.id}>
+                  {`${s.firstName} ${s.lastName}`}
+                </Option>
+              ))}
             </Select>
           </Item>
 
-          <Item
-            name="captains"
-            label="Captains"
-            rules={[{ required: true, message: 'Please, select a captain' }]}
-          >
-            <Select
-              mode="tags"
-              onSelect={(e: number) => {
-                setTeam({
-                  ...team,
-                  captains: [...team.captains, e],
-                });
-              }}
-              onDeselect={(e: number) => {
-                setTeam({
-                  ...team,
-                  captains: team.captains.filter(i => i !== e),
-                });
-              }}
-              tagRender={props => {
-                const name = getNameBySailorId(props.value);
-
-                return (
-                  <Tag
-                    closable={props.closable}
-                    onClose={props.onClose}
-                  >
-                    {name}
-                  </Tag>
-                );
-              }}
-            >
-              {sailors.map(s => s.sailorType === 'CAPTAIN' && (
-                <Option key={s.id}>
+          <Item name="captain" label="Captain" rules={[{ required: true, message: 'This field is required' }]}>
+            <Select onSelect={(id: number) => {
+              selectHandler('captain', id);
+            }}>
+            {sailorsForSelect.filter(s => s.sailorType === 'CAPTAIN').map(s => (
+                <Option key={s.id} value={s.id}>
                   {`${s.firstName} ${s.lastName}`}
                 </Option>
               ))}
@@ -268,8 +188,9 @@ const BoatModal: React.FC<Props> = ({ children, update, boat, sailors, allSailor
           </Item>
 
           <Button
+            style={{ width: '40%' }}
             htmlType="submit"
-            icon={boat ? <SaveOutlined /> : <PlusOutlined />}
+            icon={boat ? <CloudUploadOutlined /> : <PlusOutlined />}
           >
             {boat ? 'Save' : 'Create'}
           </Button>

@@ -34,7 +34,7 @@ const Boats: React.FC = () => {
       setBoats(_boats);
       setSailors(_sailors);
       setAllSailors(_allSailors);
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   };
@@ -56,6 +56,20 @@ const Boats: React.FC = () => {
       </h2>
 
       <ul className={styles.list}>
+        <li className={styles.item} key={'new'}>
+          <BoatModal sailors={sailors} allSailors={allSailors} update={init}>
+            <button className={cn(styles.button, styles.button_new)}>
+              <div>
+                <PlusOutlined className={styles.icon} />
+              </div>
+
+              <div className={styles.text}>
+                Create New Boat
+              </div>
+            </button>
+          </BoatModal>
+        </li>
+
         {boats.map(item => (
           <li className={styles.item} key={item.id}>
             <div className={styles.button}>
@@ -81,20 +95,6 @@ const Boats: React.FC = () => {
             </div>
           </li>
         ))}
-
-        <li className={styles.item} key={'new'}>
-          <BoatModal sailors={sailors} allSailors={allSailors} update={init}>
-            <button className={cn(styles.button, styles.button_new)}>
-              <div>
-                <PlusOutlined className={styles.icon} />
-              </div>
-
-              <div className={styles.text}>
-                Create New Boat
-              </div>
-            </button>
-          </BoatModal>
-        </li>
       </ul>
     </Layout>
   );

@@ -18,6 +18,12 @@ class BoatsStore {
     return data;
   }
 
+  @action async getFreeBoats() {
+    const { data } = await api.get('/boats/free');
+
+    return data;
+  }
+
   @action  async createBoat(dto: Partial<CreateBoat>, team: Partial<Team>) {
     const request = Object.values(team).map(s => `sailorId=${s.id}`).join('&');
 

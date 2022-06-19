@@ -49,6 +49,20 @@ const Sailors: React.FC = () => {
       </h2>
 
       <ul className={styles.list}>
+      <li className={styles.item} key={'new'}>
+          <SailorModal update={init}>
+            <button className={cn(styles.button, styles.button_new)}>
+              <div>
+                <PlusOutlined className={styles.icon} />
+              </div>
+
+              <div className={styles.text}>
+                Create New Sailor
+              </div>
+            </button>
+          </SailorModal>
+        </li>
+
         {sailors.map(item => (
           <li className={styles.item} key={item.id}>
             <div className={styles.button}>
@@ -82,20 +96,6 @@ const Sailors: React.FC = () => {
             </div>
           </li>
         ))}
-
-        <li className={styles.item} key={'new'}>
-          <SailorModal update={init}>
-            <button className={cn(styles.button, styles.button_new)}>
-              <div>
-                <PlusOutlined className={styles.icon} />
-              </div>
-
-              <div className={styles.text}>
-                Create New Sailor
-              </div>
-            </button>
-          </SailorModal>
-        </li>
       </ul>
     </Layout>
   );

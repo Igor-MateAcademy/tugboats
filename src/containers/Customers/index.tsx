@@ -44,6 +44,20 @@ const Customers: React.FC = () => {
       </h2>
 
       <ul className={styles.list}>
+        <li className={styles.item} key={'new'}>
+          <CustomerModal update={init}>
+            <button className={cn(styles.button, styles.button_new)}>
+              <div>
+                <PlusOutlined className={styles.icon} />
+              </div>
+
+              <div className={styles.text}>
+                Create New Customer
+              </div>
+            </button>
+          </CustomerModal>
+        </li>
+
         {customers.map(item => (
           <li className={styles.item} key={item.id}>
             <div className={styles.button}>
@@ -77,20 +91,6 @@ const Customers: React.FC = () => {
             </div>
           </li>
         ))}
-
-        <li className={styles.item} key={'new'}>
-          <CustomerModal update={init}>
-            <button className={cn(styles.button, styles.button_new)}>
-              <div>
-                <PlusOutlined className={styles.icon} />
-              </div>
-
-              <div className={styles.text}>
-                Create New Customer
-              </div>
-            </button>
-          </CustomerModal>
-        </li>
       </ul>
     </Layout>
   );

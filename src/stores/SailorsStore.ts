@@ -27,6 +27,12 @@ class SailorsStore {
     return data;
   }
 
+  @action async getBoatBySailorId(id: number) {
+    const { data, status } = await api.get(`sailors/boat?sailorId=${id}`);
+
+    return status === 200 && data;
+  }
+
   @action async createSailor(dto: Partial<CreateSailor>) {
     const { data } = await api.post('/sailors', dto);
 

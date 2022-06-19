@@ -6,6 +6,12 @@
   color: #575757;
 }
 
+.search {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
 .list {
   display: flex;
   flex-wrap: wrap;
@@ -54,6 +60,11 @@
         }
       }
 
+      &_free {
+        border-color: #188fff1b;
+        background-color: #188fff1b;
+      }
+
       &_new {
         display: flex;
         flex-direction: column;
@@ -91,6 +102,21 @@
           font-size: 20px;
           color: #575757;
           transition: all 0.4s;
+        }
+      }
+
+      .status {
+        position: absolute;
+        top: 8px;
+        left: 16px;
+        padding: 2px 10px; 
+        background-color: #188fff38;
+        border-radius: 34px;
+
+        > span {
+          font-weight: 600;
+          font-size: 15px;
+          color: #188fff4c;
         }
       }
 

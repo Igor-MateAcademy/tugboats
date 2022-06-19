@@ -11,6 +11,7 @@ type BoatType = 'CARGO' | 'BARGE' | 'VESSEL';
 export interface Boat extends CreateBoat {
   id: number;
   sailors: Sailor[];
+  busy: boolean;
 }
 
 export interface CreateBoat {

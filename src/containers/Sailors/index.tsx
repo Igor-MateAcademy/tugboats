@@ -22,12 +22,15 @@ const Sailors: React.FC = () => {
   const { sailorsStore } = useStore();
 
   const [sailors, setSailors] = useState<Sailor[]>([]);
+  const [freeSailors, setFreeSailors] = useState<Sailor[]>([]);
 
   const init = async () => {
     try {
       const _sailors = await sailorsStore.getSailors();
+      const _free = await sailorsStore.getFreeSailors();
 
       setSailors(_sailors);
+      setFreeSailors(_free);
     } catch (e) {
       console.log(e);
     }
@@ -49,8 +52,8 @@ const Sailors: React.FC = () => {
       </h2>
 
       <ul className={styles.list}>
-      <li className={styles.item} key={'new'}>
-          <SailorModal update={init}>
+        <li className={styles.item} key={'new'}>
+          <SailorModal update={init} isComplected={false}>
             <button className={cn(styles.button, styles.button_new)}>
               <div>
                 <PlusOutlined className={styles.icon} />
@@ -66,7 +69,7 @@ const Sailors: React.FC = () => {
         {sailors.map(item => (
           <li className={styles.item} key={item.id}>
             <div className={styles.button}>
-              <SailorModal sailor={item} update={init}>
+              <SailorModal sailor={item} update={init} isComplected={!!!freeSailors.find(s => s.id === item.id)}>
                 <button className={styles.edit}>
                   <EditOutlined className={styles.icon} />
                 </button>

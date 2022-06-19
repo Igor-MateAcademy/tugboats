@@ -49,27 +49,31 @@ const Journeys: React.FC = () => {
           <h3 className={styles.subtitle}>All</h3>
 
           <ul className={styles.list}>
-            {journeys.map(j => (
-              <JourneyModal update={init} key={j.id} journey={j}>
-                <button className={styles.button}>
-                  <li className={styles.item}>
-                    <div className={styles.box}>
-                      <span>{j.beginning}</span>
+            {journeys.map(j => {
+              console.log(moment(j.startDate).format('DD-MM-YYYY H:mm'), moment(j.startDate).isBefore(moment(), 'hour'));
 
-                      <LineOutlined />
+              return (
+                <JourneyModal inTransit={moment(j.startDate).isBefore(moment(), 'hour')} update={init} key={j.id} journey={j}>
+                  <button className={styles.button}>
+                    <li className={styles.item}>
+                      <div className={styles.box}>
+                        <span>{j.beginning}</span>
 
-                      <span>{j.destination}</span>
-                    </div>
+                        <LineOutlined />
 
-                    <div className={styles.box}>
-                      <CalendarOutlined />
-                      
-                      <span>{moment(j.startDate).format('DD-MM-YYYY H:mm')}</span>
-                    </div>
-                  </li>
-                </button>
-              </JourneyModal>
-            ))}
+                        <span>{j.destination}</span>
+                      </div>
+
+                      <div className={styles.box}>
+                        <CalendarOutlined />
+
+                        <span>{moment(j.startDate).format('DD-MM-YYYY H:mm')}</span>
+                      </div>
+                    </li>
+                  </button>
+                </JourneyModal>
+              );
+            })}
           </ul>
         </div>
 
@@ -78,7 +82,7 @@ const Journeys: React.FC = () => {
 
           <ul className={styles.list}>
             {inTransit.map(j => (
-              <JourneyModal update={init} key={j.id} journey={j}>
+              <JourneyModal update={init} key={j.id} journey={j} inTransit={true}>
                 <button className={styles.button}>
                   <li className={styles.item}>
                     <div className={styles.box}>
@@ -91,7 +95,7 @@ const Journeys: React.FC = () => {
 
                     <div className={styles.box}>
                       <CalendarOutlined />
-                      
+
                       <span>{moment(j.startDate).format('DD-MM-YYYY H:mm')}</span>
                     </div>
                   </li>

@@ -10,11 +10,12 @@ interface Props {
   children: React.ReactNode;
   sailor?: Sailor;
   update: () => void;
+  isComplected?: boolean;
 }
 
 const { Item, useForm } = Form;
 
-const SailorModal: React.FC<Props> = ({ children, sailor, update }) => {
+const SailorModal: React.FC<Props> = ({ children, sailor, update, isComplected }) => {
   const { sailorsStore } = useStore();
   const [form] = useForm();
 
@@ -71,47 +72,50 @@ const SailorModal: React.FC<Props> = ({ children, sailor, update }) => {
           validateTrigger={['onSubmit', 'onBlur', 'onChange']}
           initialValues={sailor ? { ...sailor } : { sailorType: 'SAILOR' }}
         >
-          <Item name="firstName" label="First Name" rules={[{ required: true, message: 'This field is required'}]}>
+          <Item name="firstName" label="First Name" rules={[{ required: true, message: 'This field is required' }]}>
             <Input placeholder="First name" onChange={e => {
               inputHandler('firstName', e.target.value);
-            }} />
+            }} disabled={isComplected} />
           </Item>
 
-          <Item name="lastName" label="Last Name" rules={[{ required: true, message: 'This field is required'}]}>
+          <Item name="lastName" label="Last Name" rules={[{ required: true, message: 'This field is required' }]}>
             <Input placeholder="Last name" onChange={e => {
               inputHandler('lastName', e.target.value);
-            }} />
+            }} disabled={isComplected} />
           </Item>
 
-          <Item name="sailorType" label="Role" rules={[{ required: true, message: 'This field is required'}]}>
+          <Item name="sailorType" label="Role" rules={[{ required: true, message: 'This field is required' }]}>
             <Select options={[
-                {
-                  label: 'Captain',
-                  value: 'CAPTAIN',
-                },
-                {
-                  label: 'Mechanic',
-                  value: 'MECHANIC',
-                },
-                {
-                  label: 'Sailor',
-                  value: 'SAILOR',
-                },
-              ]}
+              {
+                label: 'Captain',
+                value: 'CAPTAIN',
+              },
+              {
+                label: 'Mechanic',
+                value: 'MECHANIC',
+              },
+              {
+                label: 'Sailor',
+                value: 'SAILOR',
+              },
+            ]}
               onSelect={(e: string) => {
                 inputHandler('sailorType', e);
               }}
+              disabled={isComplected}
             />
           </Item>
 
-          <Button
-            htmlType="submit"
-            icon={sailor ? <CloudUploadOutlined /> : <PlusOutlined />}
-            size="large"
-            style={{ width: '40%' }}
-          >
-            {sailor ? 'Save' : 'Create'}
-          </Button>
+          {!isComplected && (
+            <Button
+              htmlType="submit"
+              icon={sailor ? <CloudUploadOutlined /> : <PlusOutlined />}
+              size="large"
+              style={{ width: '40%' }}
+            >
+              {sailor ? 'Save' : 'Create'}
+            </Button>
+          )}
         </Form>
       </Modal>
     </>

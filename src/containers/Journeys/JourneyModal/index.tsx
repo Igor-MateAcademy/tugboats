@@ -13,11 +13,12 @@ interface Props {
   children: React.ReactNode;
   update: () => void;
   journey?: Journey;
+  inTransit?: boolean;
 }
 
 const { useForm, Item } = Form;
 
-const JourneyModal: React.FC<Props> = ({ children, update, journey }) => {
+const JourneyModal: React.FC<Props> = ({ children, update, journey, inTransit }) => {
   const [form] = useForm();
   const { journeysStore, boatsStore, customersStore } = useStore();
 
@@ -100,13 +101,13 @@ const JourneyModal: React.FC<Props> = ({ children, update, journey }) => {
           <Item name="customerId" label="Customer" rules={[{ required: true, message: 'This field is required' }]}>
             <Select placeholder="Customer" options={customers.map(c => ({ label: `${c.firstName} ${c.lastName}`, value: c.id }))} onSelect={(e: number) => {
               fieldHandler('customerId', e);
-            }} />
+            }} disabled={inTransit} />
           </Item>
 
           <Item name="boatId" label="Boat" rules={[{ required: true, message: 'This field is required' }]}>
             <Select placeholder="Boat" options={freeBoats.map(b => ({ label: b.name, value: b.id }))} onSelect={(e: number) => {
               fieldHandler('boatId', e);
-            }} />
+            }} disabled={inTransit} />
           </Item>
 
           <Divider />
@@ -118,7 +119,7 @@ const JourneyModal: React.FC<Props> = ({ children, update, journey }) => {
                   ...info,
                   startDate: moment(info.startDate).date(e.date()),
                 });
-              }} />
+              }} disabled={inTransit} />
             </Item>
 
             <Item label="Time" name="startDate">
@@ -128,6 +129,7 @@ const JourneyModal: React.FC<Props> = ({ children, update, journey }) => {
                   startDate: moment(info.startDate).hours(e.hours()).minutes(e.minutes()),
                 });
               }}
+              disabled={inTransit}
               />
             </Item>
           </div>
@@ -139,7 +141,7 @@ const JourneyModal: React.FC<Props> = ({ children, update, journey }) => {
                   ...info,
                   endDate: moment(info.endDate).date(e.date()),
                 });
-              }} />
+              }} disabled={inTransit} />
             </Item>
 
             <Item label="Time" name="endDate">
@@ -148,7 +150,7 @@ const JourneyModal: React.FC<Props> = ({ children, update, journey }) => {
                   ...info,
                   endDate: moment(info.endDate).hours(e.hours()).minutes(e.minutes()),
                 });
-              }} />
+              }} disabled={inTransit} />
             </Item>
           </div>
 
@@ -157,13 +159,13 @@ const JourneyModal: React.FC<Props> = ({ children, update, journey }) => {
           <Item name="beginning" label="Beginning" rules={[{ required: true, message: 'This field is required' }]}>
             <Input placeholder="From" onChange={e => {
               fieldHandler('beginning', e.target.value);
-            }} />
+            }} disabled={inTransit} />
           </Item>
 
           <Item name="destination" label="Destination" rules={[{ required: true, message: 'This field is required' }]}>
             <Input placeholder="To" onChange={e => {
               fieldHandler('destination', e.target.value);
-            }} />
+            }} disabled={inTransit} />
           </Item>
 
           <Divider />
@@ -184,23 +186,27 @@ const JourneyModal: React.FC<Props> = ({ children, update, journey }) => {
               },
             ]} onSelect={(e: string) => {
               fieldHandler('cargoType', e);
-            }} />
+            }} disabled={inTransit} />
           </Item>
 
           <Item name="weight" label="Weight" rules={[{ required: true, message: 'This field is required' }]}>
             <Input placeholder="Value" onChange={e => {
               fieldHandler('weight', +e.target.value);
-            }} />
+            }} disabled={inTransit} />
           </Item>
 
-          <Button htmlType="submit" icon={journey ? <CloudUploadOutlined /> : <PlusOutlined />} style={{ width: '40%' }} size="large">
-            {journey ? 'Save' : 'Create'}
-          </Button>
+          {!inTransit && (
+            <>
+              <Button htmlType="submit" icon={journey ? <CloudUploadOutlined /> : <PlusOutlined />} style={{ width: '40%' }} size="large">
+                {journey ? 'Save' : 'Create'}
+              </Button>
 
-          {journey && (
-            <Button type="default" size="large" style={{ width: '40%', marginLeft: '20px' }} icon={<DeleteOutlined />} onClick={deleteJourney} danger>
-              Remove
-            </Button>
+              {journey && (
+                <Button type="default" size="large" style={{ width: '40%', marginLeft: '20px' }} icon={<DeleteOutlined />} onClick={deleteJourney} danger>
+                  Remove
+                </Button>
+              )}
+            </>
           )}
         </Form>
       </Modal>
